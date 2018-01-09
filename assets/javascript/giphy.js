@@ -26,9 +26,13 @@ renderButtons();
 
 // function to get value from input form
 $("#input-button").on("click", function(event) {
+	// keeps page from reloading
 	event.preventDefault();
-	var input = $("#user-input").val();
+	// gets input value from form
+	var input = $("#user-input").eq(0).val();
+	// adds input to tvshows array
 	tvshows.push(input);
+	// runs renderButtons function to generate new buttons
 	renderButtons();
 });
 
@@ -66,15 +70,41 @@ var selection = $(this).attr("data-name");
 	       	// this creates a p tag to write the rating to the doc
 	        var p = $("<p>").text("Rating: " + rating);
 
-	        // this variable stores the gifs
+	        // these variables store the gifs & specific properties of gifs
+	        var animated = results[i].images.fixed_height.url;
+	        var still = results[i].images.fixed_height_still.url;
 	        var tvshowImage = $("<img>");
-	        tvshowImage.attr("src", results[i].images.fixed_height.url);
+	        tvshowImage.attr("src",still);
+	        tvshowImage.attr("data-still",still);
+	        tvshowImage.attr("data-animated",animated);
+	        // sets the initial image to be the still image
+	        tvshowImage.attr("data-state","still");
+	        tvshowImage.addClass("searchImage");
+	        	        
 
-	        gifDiv.prepend(p);
-	        gifDiv.prepend(tvshowImage);
+	        gifDiv.append(tvshowImage);
+	        gifDiv.append(p);
 
 	        // adds the images to the gifs div
 	        $("#gifs").prepend(gifDiv);
           	}
       	});
-	});
+	
+});
+
+// This switches the images from still to animated
+// this function defines what happens when you click on the image
+$(document).on("click",".searchImage",function(){
+	// looks for the data-state of the image
+	var state = $(this).attr("data-state");
+	if(state =="still"){
+		// change source image & data-state to animated
+		$(this).attr("src",$(this).data("animated"));
+		$(this).attr("data-state","animated");
+	} else {
+		// change source image & data-state to still
+		$(this).attr("src",$(this).data("still"));
+		$(this).attr("data-state","still");
+	}
+
+})
